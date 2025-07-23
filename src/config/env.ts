@@ -6,7 +6,7 @@ import { defaults } from './defaults.js';
 const envFile = process.env.KIMI_ENV_FILE || '.env';
 const envPath = resolve(envFile);
 
-config({ path: envPath });
+config({ path: envPath, quiet: true });
 
 export const env = {
   KIMI_API_KEY: process.env.KIMI_API_KEY!,
