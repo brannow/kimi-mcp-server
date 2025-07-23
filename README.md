@@ -1,6 +1,8 @@
 # Kimi MCP Server
 
-A Model Context Protocol (MCP) server that provides Kimi AI tools for technical discussions and architectural reviews.
+Bring Kimi K2's pragmatic technical expertise directly into Claude Code for peer review and architectural discussions.
+
+Get a second opinion on your code decisions, architecture choices, and technical trade-offs, right in your development workflow.
 
 ## Features
 
@@ -15,25 +17,11 @@ A Model Context Protocol (MCP) server that provides Kimi AI tools for technical 
 
 ## Quick Start
 
-### 1. Clone and Setup
-```bash
-git clone <repository-url>
-cd kimi-mcp-server
-npm run setup
-```
+1. **Get your API key**: https://platform.moonshot.ai/console
+2. **Install**: `git clone <repo> && cd kimi-mcp-server && npm run setup`
+3. **Use**: Open Claude Code and type `/mcp` to access Kimi tools
 
-The setup script will:
-- Check Node.js version compatibility
-- Guide you through API key configuration
-- Install dependencies automatically
-- Build the project
-- Register with Claude Code (optional)
-
-### 2. Get Your API Key
-Create your API key at: https://platform.moonshot.ai/console
-
-### 3. Start Using
-Open Claude Code and type `/mcp` to access Kimi tools!
+That's it! The setup script handles everything else.
 
 ## Manual Installation
 
@@ -89,13 +77,13 @@ claude mcp add-json kimi-server '{
 ```bash
 npm run setup
 ```
-Interactive setup script that handles everything from API key configuration to Claude Code registration.
+Interactive setup script that handles everything from API key configuration to Claude Code registration and system prompts installation.
 
 ### Remove
 ```bash
 npm run remove
 ```
-Safely removes the MCP server from Claude Code (both user and project scopes).
+Safely removes the MCP server from Claude Code (both user and project scopes) and optionally removes system prompts.
 
 ### Build
 ```bash
@@ -116,6 +104,15 @@ Starts the server locally for testing.
 | `KIMI_API_KEY` | Yes | Your Kimi AI API key from https://platform.moonshot.ai/console | - |
 | `MCP_TIMEOUT` | No | Server startup timeout in milliseconds | 10000 |
 
+## System Prompts
+
+The setup script can optionally install system prompts to `~/.claude/system-prompts.md`, enabling direct slash commands:
+
+- `/kimi [question]` - Technical discussion using kimi-argue tool
+- `/kimi-plan [plan]` - Architectural review using kimi-review-plan tool
+
+These commands work anywhere in Claude Code without needing to access MCP tools manually.
+
 ## Verification
 
 ### Check Installation
@@ -126,9 +123,10 @@ Should show `kimi-server` in the list.
 
 ### Test Tools
 1. Open Claude Code
-2. Type `/mcp`
-3. Select a Kimi tool (kimi-argue or kimi-review-plan)
-4. Provide your technical question or plan
+2. Use slash commands:
+   - `/kimi Should we use React or Vue for our new project?`
+   - `/kimi-plan Review this microservices architecture: API Gateway → Auth Service → User Service → Database`
+3. Or type `/mcp` and select a tool manually
 
 ## Development
 

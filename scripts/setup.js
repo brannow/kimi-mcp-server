@@ -1,9 +1,10 @@
 #!/usr/bin/env node
 import { execSync } from 'child_process';
-import { existsSync, writeFileSync } from 'fs';
+import { existsSync, writeFileSync, readFileSync, mkdirSync } from 'fs';
 import { EOL } from 'os';
 import path from 'path';
 import readline from 'readline';
+import { homedir } from 'os';
 
 const rl = readline.createInterface({
     input: process.stdin,
@@ -12,6 +13,63 @@ const rl = readline.createInterface({
 
 function question(q) {
     return new Promise((resolve) => rl.question(q, resolve));
+}
+
+async function installSlashCommands() {
+    const claudeDir = path.join(homedir(), '.claude');
+    const commandsDir = path.join(claudeDir, 'commands');
+    const sourceCommandsDir = path.resolve('commands');
+    const commandFiles = ['kimi.md', 'kimi-plan.md'];
+    
+    if (!existsSync(sourceCommandsDir)) {
+        console.log('commands directory not found in project - skipping slash commands setup');
+        return;
+    }
+
+    console.log(`Found ${commandFiles.length} Kimi commands to install:`);
+    commandFiles.forEach(file => {
+        if (existsSync(path.join(sourceCommandsDir, file))) {
+            console.log(`  - /${file.replace('.md', '')}`);
+        }
+    });
+    const installCommands = await question(
+        'Install Kimi slash commands (/kimi, /kimi-plan) to ~/.claude/commands/? (y/n) [n]: '
+    );
+    
+    if (installCommands.trim().toLowerCase() !== 'y') {
+        console.log('Skipping slash commands installation.');
+        return;
+    }
+    
+    // Create ~/.claude/commands directory if it doesn't exist
+    if (!existsSync(commandsDir)) {
+        mkdirSync(commandsDir, { recursive: true });
+        console.log('Created ~/.claude/commands directory');
+    }
+    
+    // Install command files
+    let installedCount = 0;
+    
+    for (const file of commandFiles) {
+        const sourcePath = path.join(sourceCommandsDir, file);
+        const targetPath = path.join(commandsDir, file);
+        
+        if (existsSync(sourcePath)) {
+            const content = readFileSync(sourcePath, 'utf8');
+            writeFileSync(targetPath, content);
+            console.log(`Installed /${file.replace('.md', '')} command`);
+            installedCount++;
+        } else {
+            console.log(`Source file ${file} not found`);
+        }
+    }
+    
+    if (installedCount > 0) {
+        console.log(`\nSuccessfully installed ${installedCount} Kimi slash command(s)!`);
+        console.log('You can now use /kimi and /kimi-plan directly in Claude Code.');
+    } else {
+        console.log('No commands were installed.');
+    }
 }
 
 (async () => {
@@ -76,6 +134,8 @@ function question(q) {
     console.log('Building TypeScript…');
     execSync('npm run build', { stdio: 'inherit' });
 
+    const absPath = path.resolve('dist/server.js');
+
     try {
         execSync('which claude', { stdio: 'ignore' });
         const scope = await question(
@@ -99,6 +159,9 @@ function question(q) {
     } catch {
         console.log('Claude CLI not found – skipping MCP registration.');
     }
+
+    // Install slash commands
+    await installSlashCommands();
 
     rl.close();
 })();
