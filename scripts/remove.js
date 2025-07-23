@@ -108,31 +108,14 @@ async function removeSlashCommands() {
         return;
     }
 
-    // Try to remove from both scopes
-    let removed = false;
-
+    // Remove server (no scope needed for remove command)
     try {
-        console.log('Removing from user scope...');
-        execSync('claude mcp remove --scope user kimi-server', { stdio: 'inherit' });
-        console.log('Removed from user scope');
-        removed = true;
-    } catch (error) {
-        console.log('Not found in user scope (or already removed)');
-    }
-
-    try {
-        console.log('Removing from project scope...');
-        execSync('claude mcp remove --scope project kimi-server', { stdio: 'inherit' });
-        console.log('Removed from project scope');
-        removed = true;
-    } catch (error) {
-        console.log('Not found in project scope (or already removed)');
-    }
-
-    if (removed) {
+        console.log('Removing kimi-server...');
+        execSync('claude mcp remove kimi-server', { stdio: 'inherit' });
         console.log('\nkimi-server has been successfully removed from Claude Code');
-    } else {
-        console.log('\nkimi-server was not found in any scope');
+    } catch (error) {
+        console.log(`\nCould not remove kimi-server: ${error.message}`);
+        console.log('It may have already been removed or not registered.');
     }
 
     // Remove slash commands

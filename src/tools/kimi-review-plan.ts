@@ -4,10 +4,11 @@ interface Message {
 }
 
 import OpenAI from 'openai';
+import { env } from '../config/env.js';
 
 const kimi = new OpenAI({
-  baseURL: 'https://api.moonshot.cn/v1',
-  apiKey: process.env.KIMI_API_KEY!
+  baseURL: env.KIMI_API_URL,
+  apiKey: env.KIMI_API_KEY
 });
 
 export default async function reviewPlan(plan: string): Promise<string> {
@@ -36,10 +37,10 @@ Be direct and concise. Focus on actionable feedback.`
     ];
 
     const response = await kimi.chat.completions.create({
-      model: 'kimi-k2-latest',
+      model: env.KIMI_API_MODEL,
       messages: prompt,
       temperature: 0.3,
-      max_tokens: 2048
+      max_completion_tokens: 2048
     });
 
     return response.choices[0]?.message?.content || 'No response received from Kimi K2';

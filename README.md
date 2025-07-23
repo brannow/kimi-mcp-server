@@ -1,264 +1,155 @@
 # Kimi MCP Server
 
-Bring Kimi K2's pragmatic technical expertise directly into Claude Code for peer review and architectural discussions.
-
-Get a second opinion on your code decisions, architecture choices, and technical trade-offs, right in your development workflow.
-
-## Features
-
-- **kimi-argue**: Get Kimi K2's pragmatic perspective on technical discussions and decisions
-- **kimi-review-plan**: Get Kimi K2's architectural review of technical plans
-
-## Prerequisites
-
-- Node.js 18+
-- npm or yarn
-- **KIMI_API_KEY**: API key for Kimi services (get yours at https://platform.moonshot.ai/console)
+Get Kimi K2's pragmatic technical perspective directly in Claude Code. Perfect for code reviews, architecture decisions, and technical discussions.
 
 ## Quick Start
 
-1. **Get your API key**: https://platform.moonshot.ai/console
+1. **Get API key**: [Moonshot AI](https://platform.moonshot.ai/console) or [OpenRouter](https://openrouter.ai) (free tier)
 2. **Install**: `git clone <repo> && cd kimi-mcp-server && npm run setup`
-3. **Use**: Open Claude Code and type `/mcp` to access Kimi tools
+3. **Use**: Open Claude Code, type `/kimi` or `/kimi-plan`
 
-That's it! The setup script handles everything else.
+That's it! The setup script handles everything.
 
-## Manual Installation
+## What You Get
 
-If you prefer manual setup or the quick start doesn't work:
+**Two powerful tools in Claude Code:**
 
-### Step 1: Install Dependencies
+- `/kimi` - Get pragmatic perspective on technical decisions
+- `/kimi-plan` - Architectural review of your technical plans
+
+## Configuration
+
+The setup script will ask you to choose:
+
+### Option 1: Moonshot AI (Direct)
+- API Key: [Get yours here](https://platform.moonshot.ai/console)
+- Model: `kimi-k2-0711-preview`
+- Requires paid account
+
+### Option 2: OpenRouter (Recommended)
+- API Key: [Get yours here](https://openrouter.ai)
+- Model: `moonshotai/kimi-k2:free`
+- **Free tier available**
+
+## Manual Setup
+
+If you prefer to configure manually:
+
+### 1. Install Dependencies
 ```bash
 npm install
 npm run build
 ```
 
-### Step 2: Configure API Key
-
-**Option A: Environment Variable**
+### 2. Set Environment Variables
 ```bash
-export KIMI_API_KEY=your_api_key_here
+# For Moonshot AI
+export KIMI_API_KEY=your_key_here
+export KIMI_API_URL=https://api.moonshot.ai/v1
+export KIMI_API_MODEL=kimi-k2-0711-preview
+
+# For OpenRouter (free tier)
+export KIMI_API_KEY=your_key_here
+export KIMI_API_URL=https://openrouter.ai/api/v1
+export KIMI_API_MODEL=moonshotai/kimi-k2:free
 ```
 
-**Option B: Local .env File**
+### 3. Register with Claude
 ```bash
-echo "KIMI_API_KEY=your_api_key_here" > .env
+# User scope (recommended)
+claude mcp add --scope user kimi-server node $(pwd)/dist/server.js
+
+# Project scope (team shared)
+claude mcp add --scope project kimi-server node $(pwd)/dist/server.js
 ```
 
-### Step 3: Add to Claude Code
+## Commands
 
-Choose one of the following methods:
-
-#### Basic Installation (User Scope - Recommended)
-```bash
-claude mcp add --scope user kimi-server node $(pwd)/dist/server.js -e KIMI_API_KEY=${KIMI_API_KEY}
-```
-
-#### Project Scope (Team Shared)
-```bash
-claude mcp add --scope project kimi-server node $(pwd)/dist/server.js -e KIMI_API_KEY=${KIMI_API_KEY}
-```
-
-#### JSON Configuration Method
-```bash
-claude mcp add-json kimi-server '{
-  "type": "stdio",
-  "command": "node",
-  "args": ["'$(pwd)'/dist/server.js"],
-  "env": {
-    "KIMI_API_KEY": "${KIMI_API_KEY}"
-  }
-}'
-```
-
-## Management Commands
-
-### Setup
-```bash
-npm run setup
-```
-Interactive setup script that handles everything from API key configuration to Claude Code registration and system prompts installation.
-
-### Remove
-```bash
-npm run remove
-```
-Safely removes the MCP server from Claude Code (both user and project scopes) and optionally removes system prompts.
-
-### Build
-```bash
-npm run build
-```
-Compiles TypeScript to JavaScript.
-
-### Start (Development)
-```bash
-npm start
-```
-Starts the server locally for testing.
+- `npm run setup` - Interactive setup (recommended)
+- `npm run remove` - Remove from Claude Code
+- `npm run build` - Build TypeScript
+- `npm start` - Test locally
 
 ## Environment Variables
 
-| Variable | Required | Description | Default |
-|----------|----------|-------------|---------|
-| `KIMI_API_KEY` | Yes | Your Kimi AI API key from https://platform.moonshot.ai/console | - |
-| `MCP_TIMEOUT` | No | Server startup timeout in milliseconds | 10000 |
+Create a `.env` file or set environment variables:
 
-## System Prompts
-
-The setup script can optionally install system prompts to `~/.claude/system-prompts.md`, enabling direct slash commands:
-
-- `/kimi [question]` - Technical discussion using kimi-argue tool
-- `/kimi-plan [plan]` - Architectural review using kimi-review-plan tool
-
-These commands work anywhere in Claude Code without needing to access MCP tools manually.
-
-## Verification
-
-### Check Installation
 ```bash
-claude mcp list
-```
-Should show `kimi-server` in the list.
-
-### Test Tools
-1. Open Claude Code
-2. Use slash commands:
-   - `/kimi Should we use React or Vue for our new project?`
-   - `/kimi-plan Review this microservices architecture: API Gateway → Auth Service → User Service → Database`
-3. Or type `/mcp` and select a tool manually
-
-## Development
-
-This MCP server is built with TypeScript and uses the Model Context Protocol SDK.
-
-### Project Structure
-```
-kimi-mcp-server/
-├── src/
-│   ├── server.ts              # Main MCP server implementation
-│   └── tools/                 # Tool implementations
-│       ├── kimi-argue.ts      # Technical discussion tool
-│       └── kimi-review-plan.ts # Architectural review tool
-├── scripts/
-│   ├── setup.js               # Interactive setup script
-│   └── remove.js              # Removal script
-├── dist/                      # Compiled JavaScript output
-├── package.json
-└── README.md
+KIMI_API_KEY=your_api_key_here          # Required
+KIMI_API_URL=https://api.moonshot.ai/v1 # Optional, defaults shown
+KIMI_API_MODEL=kimi-k2-0711-preview    # Optional, defaults shown
+KIMI_ENV_FILE=.env                      # Optional, use custom env file
 ```
 
-### Local Development Workflow
-```bash
-# Install dependencies
-npm install
+## Usage Examples
 
-# Build the project
-npm run build
-
-# Test locally
-npm start
-
-# Make changes to src/
-# Rebuild
-npm run build
-
-# Re-register with Claude (if needed)
-npm run remove
-npm run setup
+### Code Review
+```
+/kimi Should we use React Context or Redux for state management in a small app?
 ```
 
-### Adding New Tools
-
-1. Create a new tool file in `src/tools/`
-2. Implement the tool following the MCP protocol
-3. Register the tool in `src/server.ts`
-4. Rebuild and test
+### Architecture Review
+```
+/kimi-plan 
+We're building a microservices architecture:
+- API Gateway (Kong)
+- Auth Service (JWT)
+- User Service (Node.js + PostgreSQL)
+- Notification Service (Redis + WebSockets)
+```
 
 ## Troubleshooting
 
-### Common Issues
-
-**"Node v18+ required"**
-- Update Node.js to version 18 or higher
-- Check version: `node --version`
-
-**"API key is required"**
-- Ensure `KIMI_API_KEY` is set correctly
-- Create your API key at https://platform.moonshot.ai/console
+**API key not working?**
+- Verify key at your provider's console
 - Check environment: `echo $KIMI_API_KEY`
 
-**"Claude CLI not found"**
-- Install Claude Code CLI from Anthropic
-- The setup script will skip MCP registration if CLI is not available
-
-**"kimi-server not found"**
-- Run `claude mcp list` to check current registrations
+**Commands not showing up?**
+- Restart Claude Code
+- Check registration: `claude mcp list`
 - Re-run setup: `npm run setup`
-- Verify the path to `dist/server.js` exists
 
-**Tools not appearing in Claude Code**
-- Restart Claude Code application
-- Check server is running: `claude mcp list`
-- Verify API key is valid
+**Setup fails?**
+- Ensure Node.js 18+: `node --version`
+- Install Claude CLI if missing
+- Check permissions in project directory
 
-### Reset Installation
-```bash
-# Remove current installation
-npm run remove
+## Development
 
-# Clean build
-rm -rf dist/ node_modules/
+### Project Structure
+```
+src/
+├── config/
+│   ├── defaults.ts    # Default configuration
+│   └── env.ts         # Environment loading
+├── tools/
+│   ├── kimi-argue.ts      # Technical discussion
+│   └── kimi-review-plan.ts # Architecture review
+└── server.ts          # Main MCP server
 
-# Fresh setup
-npm run setup
+scripts/
+├── setup.js           # Interactive setup
+└── remove.js          # Removal script
 ```
 
-### Debug Mode
+### Adding Tools
+
+1. Create `src/tools/my-tool.ts`
+2. Add to `server.ts` tools list
+3. Run `npm run build`
+4. Test with `npm start`
+
+## Reset Everything
+
 ```bash
-# Check what's registered
-claude mcp list
-
-# Test server directly
-node dist/server.js
-
-# Verbose npm output
-npm run build --verbose
-
-# claude debug mode
-claude --debug
+npm run remove        # Remove from Claude
+rm -rf dist/ .env     # Clean files
+npm run setup         # Fresh start
 ```
-
-## API Reference
-
-### kimi-argue
-Provides Kimi K2's perspective on technical discussions and decisions.
-
-**Input**: Technical question, decision, or discussion point
-**Output**: Pragmatic analysis with pros, cons, and recommendations
-
-### kimi-review-plan
-Get architectural review of technical plans and designs.
-
-**Input**: Technical plan, architecture description, or design document
-**Output**: Detailed review with potential issues, improvements, and best practices
-
-## Contributing
-
-1. Fork the repository
-2. Create a feature branch: `git checkout -b feature-name`
-3. Make your changes
-4. Test with `npm run build && npm start`
-5. Submit a pull request
-
-## License
-
-MIT
 
 ---
 
-**Need Help?**
-- API Keys: https://platform.moonshot.ai/console
-- MCP Protocol: https://modelcontextprotocol.org/
-- Anthropic MCP Docs: https://docs.anthropic.com/en/docs/claude-code/mcp
-- Issues: https://github.com/brannow/kimi-mcp-server/issues
+**Need help?**
+- [Moonshot Console](https://platform.moonshot.ai/console)
+- [OpenRouter Dashboard](https://openrouter.ai)
+- [MCP Documentation](https://docs.anthropic.com/en/docs/claude-code/mcp)
