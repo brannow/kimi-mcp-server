@@ -12,6 +12,8 @@
   },
   "scripts": {
     "build": "tsc",
-    "start": "node dist/server.js"
+    "start": "node dist/server.js",
+    "setup": "node scripts/setup.js",
+    "remove": "node scripts/remove.js"
   }
 }
