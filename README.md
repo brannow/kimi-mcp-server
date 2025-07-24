@@ -78,7 +78,13 @@ Create a `.env` file or set environment variables:
 KIMI_API_KEY=your_api_key_here          # Required
 KIMI_API_URL=https://api.moonshot.ai/v1 # Optional, defaults shown
 KIMI_API_MODEL=kimi-k2-0711-preview    # Optional, defaults shown
-KIMI_ENV_FILE=.env                      # Optional, use custom env file
+```
+
+### Use custom .env anywhere on the system:
+Sideload custom env via the System KIMI_ENV_FILE variable
+
+```
+export KIMI_ENV_FILE=/absolute/path/to/custom/.env
 ```
 
 ## Usage Examples
