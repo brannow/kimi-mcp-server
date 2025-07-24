@@ -1,6 +1,8 @@
 # Kimi MCP Server
 
-Get Kimi K2's pragmatic technical perspective directly in Claude Code. Perfect for code reviews, architecture decisions, and technical discussions.
+Get Kimi K2's pragmatic technical perspective directly in Claude Code. 
+
+Example usage: reviews, architecture decisions, and technical discussions.
 
 ## Quick Start
 
@@ -8,11 +10,9 @@ Get Kimi K2's pragmatic technical perspective directly in Claude Code. Perfect f
 2. **Install**: `git clone <repo> && cd kimi-mcp-server && npm run setup`
 3. **Use**: Open Claude Code, type `/kimi` or `/kimi-plan`
 
-That's it! The setup script handles everything.
-
 ## What You Get
 
-**Two powerful tools in Claude Code:**
+**Claude Code Tools:**
 
 - `/kimi` - Get pragmatic perspective on technical decisions
 - `/kimi-plan` - Architectural review of your technical plans
